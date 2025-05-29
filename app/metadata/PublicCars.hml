@@ -1,0 +1,168 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: PublicCars
+  fields:
+    - name: basePrice
+      type: Bigdecimal!
+    - name: brand
+      type: String_1!
+    - name: id
+      type: Int32!
+    - name: modelName
+      type: String_1!
+    - name: year
+      type: Int32!
+  graphql:
+    typeName: PublicCars
+    inputTypeName: PublicCarsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: pg
+      dataConnectorObjectType: public.cars
+      fieldMapping:
+        basePrice:
+          column:
+            name: base_price
+        brand:
+          column:
+            name: brand
+        id:
+          column:
+            name: id
+        modelName:
+          column:
+            name: model_name
+        year:
+          column:
+            name: year
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: PublicCars
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - basePrice
+          - brand
+          - id
+          - modelName
+          - year
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: PublicCarsBoolExp
+  operand:
+    object:
+      type: PublicCars
+      comparableFields:
+        - fieldName: basePrice
+          booleanExpressionType: NumericBoolExp
+        - fieldName: brand
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: id
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: modelName
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: year
+          booleanExpressionType: IntegerBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: PublicCarsBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: PublicCarsAggExp
+  operand:
+    object:
+      aggregatedType: PublicCars
+      aggregatableFields:
+        - fieldName: basePrice
+          aggregateExpression: NumericAggExp
+        - fieldName: brand
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: id
+          aggregateExpression: IntegerAggExp
+        - fieldName: modelName
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: year
+          aggregateExpression: IntegerAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: PublicCarsAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: PublicCarsOrderByExp
+  operand:
+    object:
+      orderedType: PublicCars
+      orderableFields:
+        - fieldName: basePrice
+          orderByExpression: BigdecimalOrderByExp
+        - fieldName: brand
+          orderByExpression: String1OrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: modelName
+          orderByExpression: String1OrderByExp
+        - fieldName: year
+          orderByExpression: Int32OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: PublicCarsOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: PublicCars
+  objectType: PublicCars
+  source:
+    dataConnectorName: pg
+    collection: public.cars
+  filterExpressionType: PublicCarsBoolExp
+  aggregateExpression: PublicCarsAggExp
+  orderByExpression: PublicCarsOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: publicCars
+      subscription:
+        rootField: publicCars
+    selectUniques:
+      - queryRootField: publicCarsById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: publicCarsById
+    filterInputTypeName: PublicCarsFilterInput
+    aggregate:
+      queryRootField: publicCarsAggregate
+      subscription:
+        rootField: publicCarsAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: PublicCars
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

@@ -1,0 +1,168 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: PublicWarranties
+  fields:
+    - name: coverageDetails
+      type: String_1
+    - name: id
+      type: Int32!
+    - name: purchaseId
+      type: Int32
+    - name: warrantyPeriod
+      type: Int32!
+    - name: warrantyProvider
+      type: String_1!
+  graphql:
+    typeName: PublicWarranties
+    inputTypeName: PublicWarrantiesInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: pg
+      dataConnectorObjectType: public.warranties
+      fieldMapping:
+        coverageDetails:
+          column:
+            name: coverage_details
+        id:
+          column:
+            name: id
+        purchaseId:
+          column:
+            name: purchase_id
+        warrantyPeriod:
+          column:
+            name: warranty_period
+        warrantyProvider:
+          column:
+            name: warranty_provider
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: PublicWarranties
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - coverageDetails
+          - id
+          - purchaseId
+          - warrantyPeriod
+          - warrantyProvider
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: PublicWarrantiesBoolExp
+  operand:
+    object:
+      type: PublicWarranties
+      comparableFields:
+        - fieldName: coverageDetails
+          booleanExpressionType: TextBoolExp
+        - fieldName: id
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: purchaseId
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: warrantyPeriod
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: warrantyProvider
+          booleanExpressionType: CharacterVaryingBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: PublicWarrantiesBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: PublicWarrantiesAggExp
+  operand:
+    object:
+      aggregatedType: PublicWarranties
+      aggregatableFields:
+        - fieldName: coverageDetails
+          aggregateExpression: TextAggExp
+        - fieldName: id
+          aggregateExpression: IntegerAggExp
+        - fieldName: purchaseId
+          aggregateExpression: IntegerAggExp
+        - fieldName: warrantyPeriod
+          aggregateExpression: IntegerAggExp
+        - fieldName: warrantyProvider
+          aggregateExpression: CharacterVaryingAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: PublicWarrantiesAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: PublicWarrantiesOrderByExp
+  operand:
+    object:
+      orderedType: PublicWarranties
+      orderableFields:
+        - fieldName: coverageDetails
+          orderByExpression: String1OrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: purchaseId
+          orderByExpression: Int32OrderByExp
+        - fieldName: warrantyPeriod
+          orderByExpression: Int32OrderByExp
+        - fieldName: warrantyProvider
+          orderByExpression: String1OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: PublicWarrantiesOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: PublicWarranties
+  objectType: PublicWarranties
+  source:
+    dataConnectorName: pg
+    collection: public.warranties
+  filterExpressionType: PublicWarrantiesBoolExp
+  aggregateExpression: PublicWarrantiesAggExp
+  orderByExpression: PublicWarrantiesOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: publicWarranties
+      subscription:
+        rootField: publicWarranties
+    selectUniques:
+      - queryRootField: publicWarrantiesById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: publicWarrantiesById
+    filterInputTypeName: PublicWarrantiesFilterInput
+    aggregate:
+      queryRootField: publicWarrantiesAggregate
+      subscription:
+        rootField: publicWarrantiesAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: PublicWarranties
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

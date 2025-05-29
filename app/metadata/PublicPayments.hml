@@ -1,0 +1,168 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: PublicPayments
+  fields:
+    - name: amount
+      type: Bigdecimal!
+    - name: id
+      type: Int32!
+    - name: paymentDate
+      type: Timestamp
+    - name: paymentMethod
+      type: String_1!
+    - name: purchaseId
+      type: Int32
+  graphql:
+    typeName: PublicPayments
+    inputTypeName: PublicPaymentsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: pg
+      dataConnectorObjectType: public.payments
+      fieldMapping:
+        amount:
+          column:
+            name: amount
+        id:
+          column:
+            name: id
+        paymentDate:
+          column:
+            name: payment_date
+        paymentMethod:
+          column:
+            name: payment_method
+        purchaseId:
+          column:
+            name: purchase_id
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: PublicPayments
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - amount
+          - id
+          - paymentDate
+          - paymentMethod
+          - purchaseId
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: PublicPaymentsBoolExp
+  operand:
+    object:
+      type: PublicPayments
+      comparableFields:
+        - fieldName: amount
+          booleanExpressionType: NumericBoolExp
+        - fieldName: id
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: paymentDate
+          booleanExpressionType: TimestampWithoutTimeZoneBoolExp
+        - fieldName: paymentMethod
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: purchaseId
+          booleanExpressionType: IntegerBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: PublicPaymentsBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: PublicPaymentsAggExp
+  operand:
+    object:
+      aggregatedType: PublicPayments
+      aggregatableFields:
+        - fieldName: amount
+          aggregateExpression: NumericAggExp
+        - fieldName: id
+          aggregateExpression: IntegerAggExp
+        - fieldName: paymentDate
+          aggregateExpression: TimestampWithoutTimeZoneAggExp
+        - fieldName: paymentMethod
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: purchaseId
+          aggregateExpression: IntegerAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: PublicPaymentsAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: PublicPaymentsOrderByExp
+  operand:
+    object:
+      orderedType: PublicPayments
+      orderableFields:
+        - fieldName: amount
+          orderByExpression: BigdecimalOrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: paymentDate
+          orderByExpression: TimestampOrderByExp
+        - fieldName: paymentMethod
+          orderByExpression: String1OrderByExp
+        - fieldName: purchaseId
+          orderByExpression: Int32OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: PublicPaymentsOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: PublicPayments
+  objectType: PublicPayments
+  source:
+    dataConnectorName: pg
+    collection: public.payments
+  filterExpressionType: PublicPaymentsBoolExp
+  aggregateExpression: PublicPaymentsAggExp
+  orderByExpression: PublicPaymentsOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: publicPayments
+      subscription:
+        rootField: publicPayments
+    selectUniques:
+      - queryRootField: publicPaymentsById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: publicPaymentsById
+    filterInputTypeName: PublicPaymentsFilterInput
+    aggregate:
+      queryRootField: publicPaymentsAggregate
+      subscription:
+        rootField: publicPaymentsAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: PublicPayments
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

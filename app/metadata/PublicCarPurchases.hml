@@ -1,0 +1,180 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: PublicCarPurchases
+  fields:
+    - name: carId
+      type: Int32
+    - name: customerId
+      type: Int32
+    - name: id
+      type: Int32!
+    - name: metadata
+      type: Json
+    - name: price
+      type: Bigdecimal!
+    - name: purchaseDate
+      type: Timestamp
+  graphql:
+    typeName: PublicCarPurchases
+    inputTypeName: PublicCarPurchasesInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: pg
+      dataConnectorObjectType: public.car_purchases
+      fieldMapping:
+        carId:
+          column:
+            name: car_id
+        customerId:
+          column:
+            name: customer_id
+        id:
+          column:
+            name: id
+        metadata:
+          column:
+            name: metadata
+        price:
+          column:
+            name: price
+        purchaseDate:
+          column:
+            name: purchase_date
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: PublicCarPurchases
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - carId
+          - customerId
+          - id
+          - metadata
+          - price
+          - purchaseDate
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: PublicCarPurchasesBoolExp
+  operand:
+    object:
+      type: PublicCarPurchases
+      comparableFields:
+        - fieldName: carId
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: customerId
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: id
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: metadata
+          booleanExpressionType: JsonbBoolExp
+        - fieldName: price
+          booleanExpressionType: NumericBoolExp
+        - fieldName: purchaseDate
+          booleanExpressionType: TimestampWithoutTimeZoneBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: PublicCarPurchasesBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: PublicCarPurchasesAggExp
+  operand:
+    object:
+      aggregatedType: PublicCarPurchases
+      aggregatableFields:
+        - fieldName: carId
+          aggregateExpression: IntegerAggExp
+        - fieldName: customerId
+          aggregateExpression: IntegerAggExp
+        - fieldName: id
+          aggregateExpression: IntegerAggExp
+        - fieldName: metadata
+          aggregateExpression: JsonbAggExp
+        - fieldName: price
+          aggregateExpression: NumericAggExp
+        - fieldName: purchaseDate
+          aggregateExpression: TimestampWithoutTimeZoneAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: PublicCarPurchasesAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: PublicCarPurchasesOrderByExp
+  operand:
+    object:
+      orderedType: PublicCarPurchases
+      orderableFields:
+        - fieldName: carId
+          orderByExpression: Int32OrderByExp
+        - fieldName: customerId
+          orderByExpression: Int32OrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: metadata
+          orderByExpression: JsonOrderByExp
+        - fieldName: price
+          orderByExpression: BigdecimalOrderByExp
+        - fieldName: purchaseDate
+          orderByExpression: TimestampOrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: PublicCarPurchasesOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: PublicCarPurchases
+  objectType: PublicCarPurchases
+  source:
+    dataConnectorName: pg
+    collection: public.car_purchases
+  filterExpressionType: PublicCarPurchasesBoolExp
+  aggregateExpression: PublicCarPurchasesAggExp
+  orderByExpression: PublicCarPurchasesOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: publicCarPurchases
+      subscription:
+        rootField: publicCarPurchases
+    selectUniques:
+      - queryRootField: publicCarPurchasesById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: publicCarPurchasesById
+    filterInputTypeName: PublicCarPurchasesFilterInput
+    aggregate:
+      queryRootField: publicCarPurchasesAggregate
+      subscription:
+        rootField: publicCarPurchasesAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: PublicCarPurchases
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

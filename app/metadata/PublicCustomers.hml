@@ -1,0 +1,161 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: PublicCustomers
+  fields:
+    - name: address
+      type: String_1
+    - name: email
+      type: String_1!
+    - name: id
+      type: Int32!
+    - name: name
+      type: String_1!
+    - name: phone
+      type: String_1
+    - name: region
+      type: String_1!
+  graphql:
+    typeName: PublicCustomers
+    inputTypeName: PublicCustomersInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: pg
+      dataConnectorObjectType: public.customers
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: PublicCustomers
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - address
+          - email
+          - id
+          - name
+          - phone
+          - region
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: PublicCustomersBoolExp
+  operand:
+    object:
+      type: PublicCustomers
+      comparableFields:
+        - fieldName: address
+          booleanExpressionType: TextBoolExp
+        - fieldName: email
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: id
+          booleanExpressionType: IntegerBoolExp
+        - fieldName: name
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: phone
+          booleanExpressionType: CharacterVaryingBoolExp
+        - fieldName: region
+          booleanExpressionType: CharacterVaryingBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: PublicCustomersBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: PublicCustomersAggExp
+  operand:
+    object:
+      aggregatedType: PublicCustomers
+      aggregatableFields:
+        - fieldName: address
+          aggregateExpression: TextAggExp
+        - fieldName: email
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: id
+          aggregateExpression: IntegerAggExp
+        - fieldName: name
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: phone
+          aggregateExpression: CharacterVaryingAggExp
+        - fieldName: region
+          aggregateExpression: CharacterVaryingAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: PublicCustomersAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: PublicCustomersOrderByExp
+  operand:
+    object:
+      orderedType: PublicCustomers
+      orderableFields:
+        - fieldName: address
+          orderByExpression: String1OrderByExp
+        - fieldName: email
+          orderByExpression: String1OrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: name
+          orderByExpression: String1OrderByExp
+        - fieldName: phone
+          orderByExpression: String1OrderByExp
+        - fieldName: region
+          orderByExpression: String1OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: PublicCustomersOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: PublicCustomers
+  objectType: PublicCustomers
+  source:
+    dataConnectorName: pg
+    collection: public.customers
+  filterExpressionType: PublicCustomersBoolExp
+  aggregateExpression: PublicCustomersAggExp
+  orderByExpression: PublicCustomersOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: publicCustomers
+      subscription:
+        rootField: publicCustomers
+    selectUniques:
+      - queryRootField: publicCustomersById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: publicCustomersById
+    filterInputTypeName: PublicCustomersFilterInput
+    aggregate:
+      queryRootField: publicCustomersAggregate
+      subscription:
+        rootField: publicCustomersAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: PublicCustomers
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+
