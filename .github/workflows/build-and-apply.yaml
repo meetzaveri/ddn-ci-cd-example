@@ -1,4 +1,4 @@
-name: DDN supergraph build and apply workflow
+name: DDN supergraph build workflow
 
 on:
   # Trigger on pull request merge to "cloud" or other branches you want
@@ -47,7 +47,7 @@ jobs:
           chmod 600 .env.${{ env.BRANCH_NAME }}
 
           echo "Performing login via DDN CLI ..."
-          ddn auth login --access-token ${{ secrets[format('DDN_SERVICE_ACCOUNT_ACCESS_TOKEN_{0}', env.BRANCH_NAME }}
+          ddn auth login --access-token ${{ secrets[format('DDN_SERVICE_ACCOUNT_ACCESS_TOKEN_{0}', env.BRANCH_NAME)] }}
 
       - name: Set Context to Current Branch
         run: |
@@ -112,7 +112,7 @@ jobs:
             done
           fi
 
-      - name: Build and Apply Supergraph
+      - name: Create supergraph build
         run: |
-          # Build the Supergraph and also apply the build
-          ddn supergraph build create --apply
+          # Create the supergraph build and you can apply manually later via CLI or UI
+          ddn supergraph build create
