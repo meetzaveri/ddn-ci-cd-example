@@ -47,7 +47,7 @@ jobs:
           chmod 600 .env.${{ env.BRANCH_NAME }}
 
           echo "Performing login via DDN CLI ..."
-          ddn auth login --access-token ${{ secrets[format('DDN_SERVICE_ACC_ACCESS_TOKEN_{0}', env.BRANCH_NAME] }}
+          ddn auth login --access-token ${{ secrets[format('DDN_SERVICE_ACCOUNT_ACCESS_TOKEN_{0}', env.BRANCH_NAME] }}
 
       - name: Set Context to Current Branch
         run: |
