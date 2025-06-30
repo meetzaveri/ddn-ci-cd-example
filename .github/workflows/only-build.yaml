@@ -10,7 +10,6 @@ on:
 jobs:
   deploy:
     # Run only when PR is merged (not when it's just closed without merging)
-    # Or when manually triggered
     if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.base_ref == 'cloud'))
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +31,7 @@ jobs:
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-      - name: Create branch-specific env file from secret and Login to DDN CLI for UAT
+      - name: Create branch-specific env file from secret and Login to DDN CLI for cloud
         if: env.BRANCH_NAME !== 'main'
         run: |
           echo "Creating ${{ env.BRANCH_NAME }} file"
@@ -41,14 +40,14 @@ jobs:
 
           # Write secret to .env.{branch} file
           cat << EOF > .env.${{ env.BRANCH_NAME }}
-          ${{ secrets.DDN_ENV_QA }}
+          ${{ secrets[format('DDN_ENV_{0}',env.BRANCH_NAME)] }}
           EOF
 
           # Make sure the file is readable but secure
           chmod 600 .env.${{ env.BRANCH_NAME }}
 
           echo "Performing login via DDN CLI ..."
-          ddn auth login --access-token ${{ secrets.DDN_SERVICE_ACC_ACCESS_TOKEN_QA }}
+          ddn auth login --access-token ${{ secrets[format('DDN_SERVICE_ACC_ACCESS_TOKEN_{0}', env.BRANCH_NAME] }}
 
       - name: Set Context to Current Branch
         run: |
@@ -113,6 +112,7 @@ jobs:
             done
           fi
 
-      - name: Build and Apply Supergraph
+      - name: Create supergraph build
         run: |
+          # Create the supergraph build and you can apply manually later via CLI or UI
           ddn supergraph build create
