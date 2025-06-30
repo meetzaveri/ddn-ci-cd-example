@@ -32,7 +32,7 @@ jobs:
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
       - name: Create branch-specific env file from secret and Login to DDN CLI for cloud
-        if: env.BRANCH_NAME !== 'main'
+        if: env.BRANCH_NAME != 'main'
         run: |
           echo "Creating ${{ env.BRANCH_NAME }} file"
           # Create .env file for
